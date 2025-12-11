@@ -1,0 +1,33 @@
+name: Run FAANG script
+
+on:
+  # Run every Saturday at 08:00 UTC (Saturday morning)
+  schedule:
+    - cron: "0 8 * * 6"
+  # Allow manual runs from the GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  run-faang:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            python -m pip install -r requirements.txt
+          else
+            python -m pip install yfinance pandas matplotlib
+          fi
+
+      - name: Run FAANG script
+        run: python faang.py
